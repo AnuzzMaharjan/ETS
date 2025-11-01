@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="shortcut icon" href="assets/images/et-logo.jpg" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/modal.css">
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <title>ET | Add Expenses</title>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div class="add-expense-wrapper" id="app">
+    <div id="sidebar">
+      <sidebar></sidebar>
+    </div>
+    <div class="main-content-holder">
+      <div id="navbar">
+        <navbar></navbar>
+      </div>
+      <div class="add-expense-panel">
+        <div class="expense-entry">
+          <h3 class="montserrat-alternates-semibold">Create Expense Entry</h3>
+          <form action="">
+            <div>
+              <label for="" class="montserrat-alternates-regular">Expenditure</label><br>
+              <input type="number" v-model="expenseCreate.expense" class="roboto-light">
+            </div>
+            <div>
+              <label for="" class="montserrat-alternates-regular">Description</label><br>
+              <input type="text" class="roboto-light" v-model="expenseCreate.description">
+            </div>
+            <div>
+              <label for="" class="montserrat-alternates-regular">Category</label><br>
+              <div class="category-menu" @click="showDropdown = !showDropdown">
+                <div class="selected roboto-light">{{expenseCreate.selectedOption || 'Select Category'}}</div>
+                <div class="category-options" v-show="showDropdown">
+                  <div class="option roboto-light fs-16" v-for="(expense,index) in expenses.categories" :key="index" @click.stop="selectOption(expense.category)">
+                    {{expense.category}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <button type="submit" class="primary-button" @click="createExpense">Create &nbsp; <span><i
+                class="fa-regular fa-paper-plane"></i></span></button>
+        </div>
+        <div class="check-lists">
+          <h3 class="montserrat-alternates-semibold">Expense Entries</h3>
+          <div class="list-container">
+            <div v-if="expenses.data.length === 0" class="empty-list">
+              <h4 class="roboto-medium">No expenses found!</h4>
+              <h5 class="roboto-regular">Please create an expense entry!</h5>
+            </div>
+            <div v-else v-for="(expense,index) in expenses.data" class="list-entries" :key="index">
+              <div>
+                <input type="text" class="roboto-regular fs-16" :id="`expenseDescription${index}`" :value="expense.description" readonly />
+              </div>
+              <div>
+                <span class="drop" :style="`background-color:${getRandomHexCode()}`"></span><input type="text" class="roboto-regular fs-16" :value="expense.category"
+                  readonly />
+              </div>
+              <div class="roboto-regular fs-16">
+                <label for="">Rs.</label><input type="number" :id="`expenseAmount${index}`" class="roboto-regular fs-16" :value="expense.expense"
+                  readonly />
+              </div>
+              <div class="faded roboto-light">
+                {{expense.updatedAt ? new Date(expense.updatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : 'N/A'}}
+              </div>
+              <div>
+                <button type="button" :id="`expenseEdit${index}`" class="secondary-button" @click.stop="handleExpenseEdit(index,$event.currentTarget)">
+                  Edit&nbsp;<span><i class="fa-solid fa-pen-to-square"></i></span>
+                </button>
+                <button type="button" :id="`expenseSave${index}`" class="secondary-button hide" @click.stop="handleExpenseSave(index,$event.currentTarget,expense._id,expense.category)">
+                  Save&nbsp;
+                  <span><i class="fa-solid fa-floppy-disk"></i></span>
+                </button>
+                <button type="button" class="secondary-button color-danger" @click="handleExpenseDelete(expense._id)">
+                  Delete &nbsp;<span><i class="fa-solid fa-trash"></i></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="pagination" id="pagination">
+            <div><button :disabled="page > expenses.count || page == 1" aria-disabled="true" @click="changePage(page-1)">Prev</button></div>
+            <div v-for="n in expenses.count" :key="n" :class="{active: n == page}" @click="changePage(n)">
+              <button>{{n}}</button>
+            </div>
+            <div><button :disabled="page > expenses.count || page == expenses.count || expenses.count ==  0"
+                @click="changePage(parseInt(page)+1)">Next</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+  <script src="assets/js/addExpense.js" type="module"></script>
+</body>
+
+</html>

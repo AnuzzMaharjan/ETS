@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+    <link rel="shortcut icon" href="assets/images/et-logo.jpg" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/modal.css" />
+  <link rel="stylesheet" href="assets/css/fonts.css" />
+  <title>ET | Categories</title>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div class="categories-wrapper" id="app">
+    <div id="sidebar">
+      <sidebar></sidebar>
+    </div>
+    <div class="main-content-holder">
+      <div id="navbar">
+        <navbar></navbar>
+      </div>
+      <div class="categories-content-holder">
+        <div>
+          <h3 class="montserrat-alternates-semibold">Categories</h3>
+          <form action="" @submit.prevent="createCategory">
+            <label for="" class="roboto-regular">Category name:</label>
+            <input type="text" v-model="category.name" class="roboto-regular" name="" id="" />
+            <button type="submit" class="roboto-regular primary-button">
+              Create &nbsp;
+              <span><i class="fa-regular fa-paper-plane"></i></span>
+            </button>
+          </form>
+        </div>
+        <div class="category-container">
+          <table>
+            <thead class="roboto-light">
+              <tr>
+                <th>Category Name</th>
+                <th>Expense</th>
+                <th>Active Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody class="roboto-regular">
+              <tr v-if="category.data.length === 0">
+                <td colspan="4">
+                  <h2>No Categories found!</h2>
+                </td>
+              </tr>
+              <tr v-else v-for="(data,index) in category.data" :key="index">
+                <td>
+                  <label><span class="drop" :style="{backgroundColor:data.color}"></span>
+                    <input type="text" :value="`${data.category}`" :id="`category${index}`" readonly
+                      aria-readonly="true" style="border: 0" />
+                  </label>
+                </td>
+                <td>
+                  <label for="" class="roboto-regular">
+                    <input type="range"
+                      :style="{background: `linear-gradient(to right, var(--primary-button) ${data.percentageExpense}%, var(--faint-color) ${data.percentageExpense}%)`}" />{{data.percentageExpense}}%</label>
+                </td>
+                <td>
+                  <input type="checkbox" class="switch" :id="`aStatus${index}`" :checked="data.active"
+                    @click="toggleActive($event.currentTarget,data._id)" />
+                </td>
+                <td>
+                  <button type="button" :id="`categoryEdit${index}`" class="secondary-button"
+                    @click="handleEditButton(index)">
+                    Edit&nbsp;<span><i class="fa-solid fa-pen-to-square"></i></span>
+                  </button>
+                  <button type="button" :id="`categorySave${index}`" class="secondary-button hide"
+                    @click="handleSaveButton(index,data._id)">
+                    Save&nbsp;
+                    <span><i class="fa-solid fa-floppy-disk"></i></span>
+                  </button>
+                  <button type="button" class="secondary-button color-danger" @click="handleCategoryDelete(data._id)">
+                    Delete &nbsp;<span><i class="fa-solid fa-trash"></i></span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination" id="pagination">
+            <div><button :disabled="page > category.count || page == 1" aria-disabled="true" @click="changePage(page-1)">Prev</button></div>
+            <div v-for="n in category.count" :key="n" :class="{active: n == page}" @click="changePage(n)">
+              <button>{{n}}</button></div>
+            <div><button :disabled="page > category.count || page == category.count || category.count == 0" @click="changePage(parseInt(page)+1)">Next</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+  <!-- <script src="assets/js/modal.js"></script> -->
+  <!-- <script src="assets/js/loadComponents.js" type="module"></script> -->
+  <script src="assets/js/category.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link
+      rel="shortcut icon"
+      href="assets/images/et-logo.jpg"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/fonts.css" />
+    <link rel="stylesheet" href="assets/css/modal.css" />
+    <title>ET | Reports</title>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div class="reports-wrapper" id="app">
+      <div id="sidebar">
+        <sidebar></sidebar>
+      </div>
+      <div class="main-content-holder">
+        <div id="navbar">
+          <navbar></navbar>
+        </div>
+        <div class="reports-filter">
+          <h3 class="montserrat-alternates-semibold">Reports</h3>
+          <div>
+            <form>
+              <div class="form-input">
+                <label for="" class="roboto-regular">Start date</label>
+                <input
+                  type="date"
+                  v-model="startDate"
+                  :min="minDate"
+                  :max="maxDate"
+                />
+              </div>
+              <div class="form-input">
+                <label for="" class="roboto-regular">End date</label>
+                <input
+                  type="date"
+                  v-model="endDate"
+                  :min="minDate"
+                  :max="maxDate"
+                />
+              </div>
+            </form>
+            <button
+              type="button"
+              class="transaction-filter-btn roboto-light"
+              @click="getExpensesToday"
+            >
+              <span><i class="fa-solid fa-filter"></i></span>
+              Filter
+            </button>
+            <button type="button" class="reports-export-btn" @click="exportExcel">
+              Export <span><i class="fa-solid fa-file-export"></i></span>
+            </button>
+          </div>
+        </div>
+        <div class="main-content-wrapper">
+          <div class="reports-content-holder">
+            <div class="first-container">
+              <div class="expense-chart-holder">
+                <div>
+                  <h4 class="montserrat-alternates-regular">
+                    Expenses {{startDate && endDate ?
+                    `from ${new Date(startDate).toLocaleDateString('en-US', { month: 'long',day: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-US',{ month: 'long', day: 'numeric' })}`
+                    : !startDate && endDate ? 
+                    `from ${new Date(Date.UTC(new Date().getFullYear(),new Date().getMonth(),1)).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-US', { month: 'long', day:'numeric' })}` 
+                    : startDate && !endDate ? 
+                    `from ${new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} to ${new Date().toLocaleDateString('en-US', { month: 'long', day:'numeric' })}` 
+                    : 'Today'}}:
+                  </h4>
+                  <div class="expense-canvas-holder">
+                    <canvas id="today-expense-canvas"></canvas>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="montserrat-alternates-regular">
+                    Expenses Monthly:
+                  </h4>
+                  <div class="expense-canvas-holder">
+                    <canvas id="monthly-expense-canvas"></canvas>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="montserrat-alternates-regular">
+                    Budget Allocations:
+                  </h4>
+                  <div class="expense-canvas-holder">
+                    <canvas id="budget-allocation-canvas"></canvas>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="montserrat-alternates-regular">
+                    Possible Savings for {{new
+                    Date().toLocaleDateString('en-US', { month: 'long' })}}:
+                  </h4>
+                  <div class="expense-canvas-holder">
+                    <canvas id="possible-savings-canvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="second-container">
+              <div class="report-small-card">
+                <h4 class="roboto-regular">Total Budget</h4>
+                <p class="roboto-medium">Rs.{{transactions.monthlyBudget}}</p>
+              </div>
+              <div class="report-small-card">
+                <h4 class="roboto-regular">Total Budget Allocated</h4>
+                <p class="roboto-medium">
+                  Rs.{{budgetCategoriesExpense.totalAllocatedBudget}}
+                </p>
+              </div>
+              <div class="report-small-card">
+                <h4 class="roboto-regular">Total Expenditure</h4>
+                <p class="roboto-medium">Rs.{{transactions.monthlyExpense}}</p>
+              </div>
+              <div class="report-small-card">
+                <h4 class="roboto-regular">Expenditure Today</h4>
+                <p class="roboto-medium">
+                  Rs.{{transactions.perDayExpenses.get(new
+                  Date().toLocaleDateString('sv-SE', { year: 'numeric', month:
+                  'numeric', day: 'numeric' })) || 0}}
+                </p>
+              </div>
+              <hr />
+              <div class="report-category-container">
+                <h3 class="montserrat-alternates-regular">Categories {{startDate && endDate ?
+                    `from ${new Date(startDate).toLocaleDateString('en-US', { month: 'long',day: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-US',{ month: 'long', day: 'numeric' })}`
+                    : !startDate && endDate ? 
+                    `from ${new Date(Date.UTC(new Date().getFullYear(),new Date().getMonth(),1)).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-US', { month: 'long', day:'numeric' })}` 
+                    : startDate && !endDate ? 
+                    `from ${new Date(startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} to ${new Date().toLocaleDateString('en-US', { month: 'long', day:'numeric' })}` 
+                    : 'Today'}}</h3>
+                <div>
+                  <div
+                    v-for="(category,index) in transactions.expensesToday"
+                    class="report-category"
+                    :key="index"
+                  >
+                    <h4 class="roboto-medium">{{category.category}}</h4>
+                    <div>
+                      <p class="roboto-light">
+                        <span>Budget:</span>
+                        {{budgetCategoriesExpense.data[index]?.budget || 0}}
+                      </p>
+                      <p class="roboto-light">
+                        <span>Expense:</span> {{category.expense || 0}}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/33.1.1/ag-grid-community.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="assets/js/reports.js" type="module"></script>
+  </body>
+</html>

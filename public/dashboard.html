@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="shortcut icon" href="assets/images/et-logo.jpg" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/fonts.css" />
+  <link rel="stylesheet" href="assets/css/modal.css" />
+  <title>ET | Dashboard</title>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div class="dashboard-wrapper" id="app">
+    <div id="sidebar">
+      <sidebar></sidebar>
+    </div>
+    <div class="main-content-holder">
+      <div id="navbar">
+        <navbar></navbar>
+      </div>
+      <div class="content-wrapper">
+        <div class="top-top">
+          <div>
+            <h1 class="montserrat-alternates-semibold">
+              Hello, <span>{{user.username}}</span>!
+            </h1>
+            <p class="montserrat-alternates-light">
+              Here's your analytic details
+            </p>
+          </div>
+          <div>
+            <button type="button" @click="exportExcel">
+              Export <span><i class="fa-solid fa-file-export"></i></span>
+            </button>
+          </div>
+        </div>
+        <div class="mid-mid">
+          <div class="expense-category-container">
+            <div v-for="(category,index) in category.managedData" :key="index" class="expense-category">
+              <div>
+                <h5 class="montserrat-alternates-regular">
+                  {{category.category}} Expense
+                </h5>
+                <!-- <span><i class="fa-solid fa-ellipsis"></i></span> -->
+              </div>
+              <div>
+                <h3 class="montserrat-alternates-bold">
+                  {{category.totalExpense}}
+                </h3>
+                <p class="roboto-regular">
+                  <span class="inc color-danger"
+                    v-if="category.isTodayGreater && !category.isExpenseDiffZero && (category.percentageChange > 0)">
+                    <span><i class="fa-solid fa-arrow-up"></i></span>
+                    +{{category.percentageChange}}%
+                  </span>
+                  <span class="inc color-success"
+                    v-else-if="!category.isTodayGreater && !category.isExpenseDiffZero && (category.percentageChange > 0)">
+                    <span><i class="fa-solid fa-arrow-down"></i></span>
+                    -{{category.percentageChange}}%
+                  </span>
+                  <span v-else="!category.isTodayGreater && !category.isExpenseDiffZero" class="inc">N/A</span>
+                  <span v-if="category.isTodayGreater && !category.isExpenseDiffZero" class="inc-amt">+{{category.diff}}
+                    more</span>
+                  <span v-else-if="!category.isTodayGreater && !category.isExpenseDiffZero"
+                    class="inc-amt">{{category.diff > 0 ? category.diff * -1 : category.diff}} less</span>
+                  <span v-else="!category.isTodayGreater && !category.isExpenseDiffZero" class="inc-amt">N/A</span>
+                </p>
+              </div>
+              <div>
+                <a href="/reports" style="color: white; width: 100%"><span class="roboto-light">View Report</span>
+                  <span style="float: right"><i class="fa-solid fa-arrow-right"></i></span></a>
+              </div>
+            </div>
+          </div>
+          <div class="canvas-holder">
+            <h3 class="montserrat-alternates-semibold">Total Expenditure</h3>
+            <canvas id="totalExpense"></canvas>
+          </div>
+        </div>
+        <div class="bottom-bottom">
+          <div>
+            <h3 class="montserrat-alternates-bold">Recent Transactions</h3>
+            <div id="recentTransactions"></div>
+          </div>
+          <div>
+            <canvas id="expensesToday"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/33.1.1/ag-grid-community.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="assets/js/dashboard.js" type="module"></script>
+</body>
+
+</html>

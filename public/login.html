@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Login Page</title>
+      <link rel="shortcut icon" href="assets/images/et-logo.jpg" type="image/x-icon">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css" />
+    <link rel="stylesheet" href="assets/css/fonts.css">
+    <link rel="stylesheet" href="assets/css/style_suyog.css">
+    <link rel="stylesheet" href="assets/css/popup.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container" :class="{active:isActive}">
+            <div class="form-box login">
+                <form action="" @submit="login">
+                    <h1 class="montserrat-alternates-semibold">Login</h1>
+                    <div class="input-box roboto-regular">
+                        <input type="text" v-model="user.email" placeholder="Email" required>
+                        <i class='bx bxs-user'></i>
+                    </div>
+                    <div class="input-box roboto-regular">
+                        <input type="password" v-model="user.password" placeholder="Password" required>
+                        <i class='bx bxs-lock-alt'></i>
+                    </div>
+                    <div class="forgot-link roboto-light">
+                        <button type="button" style="background-color: transparent; border: none; cursor: pointer;"
+                            @click="forgotPassword">Forgot password?</button>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                    <!-- <p>or login with Google</p>
+                    <div class="social-icons">
+                        <a href="#"><i class='bx bxl-google'></i></a>
+                    </div> -->
+                </form>
+            </div>
+
+
+            <div class="form-box register">
+                <form action="" @submit="signup">
+                    <h1 class="montserrat-alternates-semibold">Registration</h1>
+                    <div class="input-box roboto-regular">
+                        <input type="text" v-model="user.username" placeholder="Username" required>
+                        <i class='bx bxs-user'></i>
+                    </div>
+                    <div class="input-box roboto-regular">
+                        <input type="email" v-model="user.email" placeholder="Email" required>
+                        <i class='bx bxs-envelope'></i>
+                    </div>
+                    <div class="input-box roboto-regular">
+                        <input type="password" v-model="user.password" placeholder="Password" required>
+                        <i class='bx bxs-lock-alt'></i>
+                    </div>
+                    <div class="input-box ib-otp roboto-regular">
+                        <input type="text" v-model="user.otp" placeholder="OTP" class="otp" required>
+                        <button class="otp-btn" @click="requestOtp">Request otp!</button>
+                    </div>
+                    <button type="submit" class="btn roboto-regular">Register</button>
+                    <!-- <p>or Register with Google</p>
+                    <div class="social-icons">
+                        <a href="#"><i class='bx bxl-google'></i></a>
+                    </div> -->
+                </form>
+            </div>
+
+            <div class="toggle-box">
+                <div class="toggle-panel toggle-left">
+                    <h1 class="montserrat-alternates-semibold">Hello, Welcome!</h1>
+                    <p class="montserrat-alternates-light">Don't have an account?</p>
+                    <button class="btn register-btn" @click="showRegister">Register</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1 class="montserrat-alternates-semibold">Welcome Back!</h1>
+                    <p class="montserrat-alternates-light">Already, have an account?</p>
+                    <button class="btn login-btn roboto-regular" @click="showLogin">Login</button>
+                </div>
+            </div>
+        </div>
+        <div id="fpModal" class="fp-modal">
+            <div class="modal-content">
+                <span class="close" id="rpClose" @click="closeRPModal">&times;</span>
+                <div>
+                    <h4 class="montserrat-alternates-semibold">Reset Password</h4>
+                    <form class="reset-pw" action="" @submit.prevent="resetpw">
+                        <input type="text" name="otp" id="otp" v-model="user.otp" placeholder="- - otp - -" required>
+                        <input type="password" name="password1" v-model="user.password" id="password1"
+                            placeholder="New password" required>
+                        <input type="password" name="password2" v-model="user.confirmpw" id="password2"
+                            placeholder="Confirm password" required>
+                        <button type="submit" class="btn login-btn roboto-regular">Reset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+    <script src="assets/js/login.js" defer></script>
+</body>
+
+</html>

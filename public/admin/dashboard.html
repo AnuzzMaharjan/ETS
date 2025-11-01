@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../assets/images/et-logo.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.css" />
+    <title>ET - Admin | Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/fonts.css" />
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div class="admin-dashboard-wrapper" id="app">
+        <div class="top-wrapper">
+            <div>
+                <img src="../assets/images/logo.png" alt="logo">
+            </div>
+            <div>
+                <button class="logout-btn" @click="logout"><i
+                        class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</button>
+            </div>
+        </div>
+        <div class="admin-main-content-wrapper">
+            <div v-if="users.data.length === 0" class="empty-list">
+                <h4 class="roboto-medium">No users found!</h4>
+            </div>
+            <div v-else id="usersList">
+                <table class="roboto-regular">
+                    <thead>
+                        <th>#</th><th>Username</th><th>Role</th><th>Joined</th><th>Email</th><th></th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(data,index) in users.data" :key="index">
+                            <td>
+                                <span>{{index+1}}</span>
+                            </td>
+                            <td>
+                                <form action="">
+                                    <input type="text" :value="data.username" :id="`username${index}`" readonly />
+                                </form>
+                            </td>
+                            <td class="faded">{{data.role}}</td>
+                            <td class="faded">{{data.updatedAt ? new
+                                Date(data.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})
+                                : 'N/A'}}</td>
+                            <td>
+                                <form action="">
+                                    <label for=""></label><input type="text" :value="data.email"
+                                        :id="`userEmail${index}`" readonly />
+                                </form>
+                            </td>
+                            <td>
+                                <button type="button" :disabled="data.role == 'admin'" :id="`userEdit${index}`" class="user-edit"
+                                    @click.stop="handleUserEdit(index,$event.currentTarget)">
+                                    Edit<span><i class="fa-solid fa-pen-to-square"></i></span>
+                                </button>
+                                <button type="button" :disabled="data.role == 'admin'" :id="`userSave${index}`" class="user-save hide"
+                                    @click.stop="handleUserSave(data._id,index,$event.currentTarget)">
+                                    Save
+                                    <span><i class="fa-solid fa-floppy-disk"></i></span>
+                                </button>
+                                <button type="button" :disabled="data.role == 'admin'" @click="handleUserDelete(data._id)"
+                                    class="user-delete color-danger">
+                                    Delete<span><i class="fa-solid fa-trash"></i></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination">
+                <div><button :disabled="page > count || page == 1" aria-disabled="true"
+                        @click="changePage(page-1)">Prev</button></div>
+                <div v-for="n in count" :key="n" :class="{active: n == page}" @click="changePage(n)">
+                    <button>{{n}}</button>
+                </div>
+                <div><button :disabled="page > count || page == count || count ==  0"
+                        @click="changePage(parseInt(page)+1)">Next</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"></script>
+    <script src="js/dashboard.js" type="module"></script>
+</body>
+
+</html>

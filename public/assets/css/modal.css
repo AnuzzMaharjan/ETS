@@ -1,0 +1,118 @@
+/* The Modal (background) */
+.modal,.settings-modal {
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 2;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content,.settings-modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    border-radius: 20px;
+}
+
+/* The Close Button */
+.close-container,.settings-close-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 0 5px;
+}
+.close {
+    color: #aaaaaa;
+    border: none;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close-container > div:first-child > p {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-container,.settings-modal-container{
+    margin: 10px;
+    padding: 20px 10px 0 10px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.modal-container .notice-list{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.modal-container .notice-list:not(:first-child){
+    padding-top: 15px;
+}
+.modal-container .notice-list:not(:last-child){
+    border-bottom: 1px solid var(--default-bordercolor);
+    padding-bottom: 15px;
+}
+.notice-date{
+    font-size: 14px;
+    color: var(--faint-color);
+}
+.settings-form-input{
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--default-bordercolor);
+    margin: 10px 0;
+}
+.settings-form-input input{
+    width: 90%;
+    border: none;
+    font-size: 18px;
+}
+
+.settings-form-input input:read-only{
+    color: var(--faint-color);
+}
+
+.settings-form-input span{
+    font-size: 20px;
+    color: var(--faint-color);
+    margin-left: 10px;
+}
+.req-otp-btn{
+    border: none;
+    color: black;
+    background-color: transparent;
+    border-radius: 20px;
+    margin-right: 20px;
+}
+.settings-button-group{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
