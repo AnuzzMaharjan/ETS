@@ -1,6 +1,7 @@
 import {MongoClient} from 'mongodb';
 
-const uri = 'mongodb://localhost:27017';
+const uri = Bun.env.MONGO_STR;
+if(!uri) throw new Error('MONGO_STR not found!');
 const client = new MongoClient(uri);
 
 try{

@@ -156,14 +156,15 @@ export const verifyOtp = async (otp: string|undefined, email: string|undefined):
 }
 
 // otp for forgot password
-export const forgotPassword = async (set: any, email: string) => {
-    if (!email) {
+export const forgotPassword = async (set: any, body: object) => {
+    let validatedBody = LoginSchema.partial().parse(body);
+    if (!validatedBody.email) {
         set.status = 400;
         return { success: false, message: "Email is required!" };
     }
 
     try {
-        const userExists = await users.findOne({email:email});
+        const userExists = await users.findOne({email:validatedBody.email});
         if(!userExists){
             set.status = 400;
             return {success:false,message:"User for this email doesnot exists!"};
@@ -172,7 +173,7 @@ export const forgotPassword = async (set: any, email: string) => {
         const otp = await generateOTP();
         let successReturnStatement = {};
 
-        const otpUpdate = await otps.findOneAndUpdate({ email: email }, {
+        const otpUpdate = await otps.findOneAndUpdate({ email: validatedBody.email }, {
             $set: {
                 otp: otp,
                 expiresAt: Date.now() + 300 * 1000 // 5 min
@@ -184,7 +185,7 @@ export const forgotPassword = async (set: any, email: string) => {
         } else {
             const otpInsert = await otps.insertOne({
                 otp: otp,
-                email: email,
+                email: validatedBody.email,
                 expiresAt: Date.now() + 300 * 1000 // 5 min
             })
             if (otpInsert) {
@@ -194,7 +195,7 @@ export const forgotPassword = async (set: any, email: string) => {
         }
         const subject = 'ET: Password Reset Otp!';
         const text = `Ignore if not expecting this mail. your password reset otp is: ---------- ${otp} ---------- . Do not reply!`;
-        const mail = sendMail(email, subject, text);
+        const mail = sendMail(validatedBody.email, subject, text);
         return successReturnStatement;
     } catch (err: any) {
         console.log("Error:", err);

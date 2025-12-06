@@ -4,6 +4,7 @@ import { z } from 'zod';
 import cookie from '@elysiajs/cookie';
 import jwt from '@elysiajs/jwt';
 import { jwtPayloadMiddleware } from '../middlewares/jwtPayload';
+import { sanitizeBody } from '../middlewares/sanitizeBody';
 // Zod schemas for validation in controllers
 export const BudgetSchema = z.object({
     budget: z.number().nonnegative()
@@ -18,6 +19,7 @@ export const budgetRoutes = new Elysia()
         secret: Bun.env.COOKIE_SECRET ?? ''
     }))
     .use(jwtPayloadMiddleware)
+    .use(sanitizeBody)
     .get('/budget/:id', ({ params, set }) => getBudget(params.id, set), {
         detail: {
             tags: ['Budget'],
@@ -42,8 +44,8 @@ export const budgetRoutes = new Elysia()
             }
         }
     })
-    .patch('/budget', ({ body, set, jwtPayload }) => updateBudget(body, set, jwtPayload), {
-        body: t.Object({
+    .patch('/budget', ({ sanitizedBody, set, jwtPayload }) => updateBudget(sanitizedBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             budget: t.Number()
         }),
         detail: {
@@ -71,8 +73,8 @@ export const budgetRoutes = new Elysia()
             }
         }
     })
-    .patch("budget/:category", ({ params: { category }, body, set, jwtPayload }) => categoryBudget(category, body, set, jwtPayload), {
-        body: t.Object({
+    .patch("budget/:category", ({ params: { category }, sanitizedBody, set, jwtPayload }) => categoryBudget(category, sanitizedBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             budget: t.Number()
         }),
         detail: {

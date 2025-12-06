@@ -5,6 +5,7 @@ import { z } from "zod";
 import { isAdmin } from "../middlewares/isAdmin";
 import { jwtPayloadMiddleware } from "../middlewares/jwtPayload";
 import { headers } from "../middlewares/setHeaders";
+import { sanitizeBody } from "../middlewares/sanitizeBody";
 // Zod schemas for validation in controllers
 export const CreateUserSchema = z.object({
     username: z.string().min(3),
@@ -23,8 +24,9 @@ export const UpdateUserSchema = CreateUserSchema.partial();
 
 export const userRoutes = new Elysia()
     .use(headers)
-    .post('/user', ({ body, set }) => createNewUser(body, set), {
-        body: t.Object({
+    .use(sanitizeBody)
+    .post('/user', ({ sanitizedBody, set }) => createNewUser(sanitizedBody, set), {
+        sanitizedBody: t.Object({
             username: t.String(),
             email: t.String(),
             password: t.String(),
@@ -41,8 +43,8 @@ export const userRoutes = new Elysia()
             }
         }
     })
-    .patch('/reset-password', ({ body, set }) => updateUserPassword(body, set), {
-        body: t.Object({
+    .patch('/reset-password', ({ sanitizedBody, set }) => updateUserPassword(sanitizedBody, set), {
+        sanitizedBody: t.Object({
             email: t.String(),
             password: t.String(),
             confirmpw: t.String(),

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { jwtPayloadMiddleware } from "../middlewares/jwtPayload";
 import { isAdmin } from "../middlewares/isAdmin";
 import jwt from "@elysiajs/jwt";
+import { sanitizeBody } from "../middlewares/sanitizeBody";
 
 const SECRET = Bun.env.JWT_SECRET;
 
@@ -27,6 +28,7 @@ export const authRoutes = new Elysia({ name: 'auth-routes', prefix: 'auth' })
         name: 'jwt',
         secret: SECRET
     }))
+    .use(sanitizeBody)
     .post("/login",
         ({ body, set, jwt, cookie: { authorization } }) => userLogin(body, set, jwt, authorization),
         {
@@ -48,8 +50,8 @@ export const authRoutes = new Elysia({ name: 'auth-routes', prefix: 'auth' })
                 }
             }
         })
-    .post("/generate-send-otp", ({ set, query, body }) => generateSendOtp(set, query, body), {
-        body: t.Object({
+    .post("/generate-send-otp", ({ set, query, sanitizedBody={} }) => generateSendOtp(set, query, sanitizedBody), {
+        sanitizedBody: t.Object({
             email: t.String()
         }),
         query: t.Object({
@@ -71,8 +73,8 @@ export const authRoutes = new Elysia({ name: 'auth-routes', prefix: 'auth' })
             }
         }
     })
-    .post('/forgot-password', async ({ set, body: { email } }) => forgotPassword(set, email), {
-        body: t.Object({
+    .post('/forgot-password', async ({ set, sanitizedBody={} }) => forgotPassword(set, sanitizedBody), {
+        sanitizedBody: t.Object({
             email: t.String()
         }),
         detail: {

@@ -3,6 +3,8 @@ import { createNewExpense, deleteExpense, getAllExpenses, getExpenseCount, getEx
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { jwtPayloadMiddleware } from "../middlewares/jwtPayload";
+import { sanitizeBody } from "../middlewares/sanitizeBody";
+import { ExpenseBody } from "../types";
 
 // Zod schemas for validation in controllers
 export const ExpenseSchema = z.object({
@@ -13,6 +15,7 @@ export const ExpenseSchema = z.object({
 
 export const expensesRoutes = new Elysia()
     .use(jwtPayloadMiddleware)
+    .use(sanitizeBody)
     .get('/expenses', ({ set, query, jwtPayload }) => getAllExpenses(set, query, jwtPayload), {
         query: t.Object({
             page: t.Numeric({ default: 1 }),
@@ -29,8 +32,8 @@ export const expensesRoutes = new Elysia()
             }
         }
     })
-    .post('/expense', ({ body, set, jwtPayload }) => createNewExpense(body, set, jwtPayload), {
-        body: t.Object({
+    .post('/expense', ({ sanitizedBody, set, jwtPayload }) =>  createNewExpense(sanitizedBody as ExpenseBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             expense: t.Number(),
             category: t.String(),
             description: t.String()
@@ -57,8 +60,8 @@ export const expensesRoutes = new Elysia()
             }
         }
     })
-    .put('/expense/:id/update', ({ params, body, set,jwtPayload }) => updateExpense(new ObjectId(params.id), body, set,jwtPayload), {
-        body: t.Object({
+    .put('/expense/:id/update', ({ params, sanitizedBody, set,jwtPayload }) => updateExpense(new ObjectId(params.id), sanitizedBody, set,jwtPayload), {
+        sanitizedBody: t.Object({
             expense: t.Number(),
             category: t.String(),
             description: t.String()

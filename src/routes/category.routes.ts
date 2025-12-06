@@ -3,6 +3,7 @@ import { createNewCategory, deleteCategory, getAllCategories, getCategory, getCa
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { jwtPayloadMiddleware } from "../middlewares/jwtPayload";
+import { sanitizeBody } from "../middlewares/sanitizeBody";
 
 // Zod schemas for validation in controllers
 export const CategorySchema = z.object({
@@ -16,6 +17,7 @@ export const ToggleActiveSchema = z.object({
 
 export const categoryRoutes = new Elysia()
     .use(jwtPayloadMiddleware)
+    .use(sanitizeBody)
     .get('/category/:id', ({ params, set, jwtPayload }) => getCategory(new ObjectId(params.id), set, jwtPayload), {
         detail: {
             tags: ['Categories'],
@@ -45,8 +47,8 @@ export const categoryRoutes = new Elysia()
             }
         }
     })
-    .post('/category', ({ body, set, jwtPayload }) => createNewCategory(body, set, jwtPayload), {
-        body: t.Object({
+    .post('/category', ({ sanitizedBody, set, jwtPayload }) => createNewCategory(sanitizedBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             category: t.String(),
             active: t.Boolean()
         }),
@@ -72,8 +74,8 @@ export const categoryRoutes = new Elysia()
             }
         }
     })
-    .put('/category/:id', ({ params, set, body, jwtPayload }) => updateCategory(new ObjectId(params.id), body, set, jwtPayload), {
-        body: t.Object({
+    .put('/category/:id', ({ params, set, sanitizedBody, jwtPayload }) => updateCategory(new ObjectId(params.id), sanitizedBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             category: t.String(),
             active: t.Boolean()
         }),
@@ -88,8 +90,8 @@ export const categoryRoutes = new Elysia()
             }
         }
     })
-    .patch('/category/:id/toggle-status', ({ params, set, body, jwtPayload }) => toggleActiveStatus(new ObjectId(params.id), body, set, jwtPayload), {
-        body: t.Object({
+    .patch('/category/:id/toggle-status', ({ params, set, sanitizedBody, jwtPayload }) => toggleActiveStatus(new ObjectId(params.id), sanitizedBody, set, jwtPayload), {
+        sanitizedBody: t.Object({
             active: t.Boolean()
         }),
         detail: {
