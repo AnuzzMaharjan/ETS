@@ -30,7 +30,9 @@ createApp({
                             toast.onmouseleave = Swal.resumeTimer;
                         },
                         didClose: () => {
-                            window.location.href = `${baseUrl}/admin/dashboard`;
+                            if(data.success){
+                                window.location.href = `${baseUrl}/admin/dashboard`;
+                            }
                         }
                     })
                     Toast.fire({
