@@ -65,7 +65,15 @@ export const userLogin = async (body: any, set: any, jwt: any, authorization: an
 
 export const userLogout = async (set: any, cookie: any, authorization: any) => {
     try {
-        authorization.remove()
+        authorization.set({
+            value: '',
+            path: '/',  // same as when cookie was set
+            domain: Bun.env.SITE_DOMAIN, // same domain
+            httpOnly: true,
+            secure: Bun.env.BUN_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 0, // expire immediately
+        });
         delete cookie.authorization;
         return {success:true, message: "Logout successful" };
     } catch (err: any) {
