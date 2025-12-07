@@ -9,7 +9,7 @@ try{
 }catch(error : unknown){
     throw new Error('Error Connecting database: ' + error);
 }
-const db = client.db('expense_tracking');
+const db = client.db('expense-tracking');
 
 export const users = db.collection('users');
 export const categories = db.collection('categories');
