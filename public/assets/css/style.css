@@ -123,6 +123,7 @@ button:disabled {
 
 #sidebar {
     flex-basis: 18%;
+    min-height: 100vh;
 }
 
 .main-content-holder {
